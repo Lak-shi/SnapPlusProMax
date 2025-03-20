@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITravel - Interactive Map</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: #1c1c1c;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #1c1c1c;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        .logo i {
+            color: #FFFC00;
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .nav-link:hover {
+            color: #FFFC00;
+        }
+        
+        .active-link {
+            color: #FFFC00;
+        }
+        
+        /* Map Container */
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: #2c2c2c;
+        }
+        
+        /* Search Panel */
+        .search-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #232323;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 30px;
+            background-color: #333;
+            color: #fff;
+            margin-bottom: 15px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #FFFC00;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .filter-btn {
+            background-color: #333;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+        }
+        
+        .filter-btn:hover {
+            background-color: #444;
+            color: #fff;
+        }
+        
+        .filter-btn.active {
+            background-color: #FFFC00;
+            color: #000;
+        }
+        
+        /* Custom Markers */
+        .custom-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: #FFFC00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 252, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        .custom-marker i {
+            color: #000;
+            font-size: 16px;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 252, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 252, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 252, 0, 0); }
+        }
+        
+        /* Location Popup */
+        .location-popup {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background-color: #232323;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1001;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translate(-50%, 20px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .popup-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .close-popup {
+            color: #ccc;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-popup:hover {
+            color: #FFFC00;
+            transform: rotate(90deg);
+        }
+        
+        .popup-content {
+            margin-bottom: 15px;
+        }
+        
+        .popup-image {
+            width: 100%;
+            height: 150px;
+            background-color: #333;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+        
+        .popup-description {
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .popup-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .popup-tag {
+            display: inline-block;
+            background-color: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .popup-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .popup-btn {
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .save-btn {
+            background-color: transparent;
+            border: 1px solid #00C8FF;
+            color: #00C8FF;
+        }
+        
+        .save-btn:hover {
+            background-color: rgba(0, 200, 255, 0.1);
+        }
+        
+        .directions-btn {
+            background-color: #FFFC00;
+            color: #000;
+        }
+        
+        .directions-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(255, 252, 0, 0.3);
+        }
+        
+        /* Controls */
+        .map-controls {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background-color: #232323;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            background-color: #333;
+        }
+        
+        .recenter-btn {
+            background-color: #FFFC00;
+            color: #000;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background-color: #232323;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 1002;
+        }
+        
+        .notification.active {
+            transform: translateX(0);
+        }
+        
+        .notification-icon {
+            font-size: 20px;
+            color: #FFFC00;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .notification-message {
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .close-notification {
+            color: #ccc;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-notification:hover {
+            color: #FFFC00;
+            transform: rotate(90deg);
+        }
+        
+        /* Dark mode for Leaflet map */
+        .leaflet-container {
+            background-color: #333;
+        }
+        
+        .leaflet-control-zoom a {
+            background-color: #232323;
+            color: #fff;
+            border-color: #444;
+        }
+        
+        .leaflet-control-zoom a:hover {
+            background-color: #333;
+        }
+        
+        .leaflet-popup-content-wrapper, 
+        .leaflet-popup-tip {
+            background-color: #232323;
+            color: #fff;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-panel {
+                width: calc(100% - 40px);
+            }
+            
+            .location-popup {
+                bottom: 0;
+                border-radius: 15px 15px 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="logo">
+            <i class="fas fa-globe-americas"></i>
+            AITravel
+        </a>
+        <div class="nav-links">
+            <a href="#" class="nav-link active-link">Explore</a>
+            <a href="#" class="nav-link">Saved</a>
+            <a href="#" class="nav-link">Profile</a>
+        </div>
+    </header>
+    
+    <!-- Main Map Container -->
+    <div class="map-container">
+        <div id="map"></div>
+        
+        <!-- Search Panel -->
+        <div class="search-panel">
+            <input type="text" class="search-input" placeholder="Search for places..." id="search-input">
+            <div class="filter-options">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="food">Food</button>
+                <button class="filter-btn" data-filter="attractions">Attractions</button>
+                <button class="filter-btn" data-filter="hidden">Hidden Gems</button>
+                <button class="filter-btn" data-filter="events">Events</button>
+            </div>
+        </div>
+        
+        <!-- Map Controls -->
+        <div class="map-controls">
+            <button class="control-btn recenter-btn" id="recenter-btn">
+                <i class="fas fa-location-crosshairs"></i>
+            </button>
+            <button class="control-btn" id="zoom-in-btn">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="control-btn" id="zoom-out-btn">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+        
+        <!-- Location Popup -->
+        <div class="location-popup" id="location-popup">
+            <div class="popup-header">
+                <h3 class="popup-title">Hidden Speakeasy Bar</h3>
+                <div class="close-popup" id="close-popup">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="popup-content">
+                <img src="/api/placeholder/460/200" alt="Location Image" class="popup-image">
+                <p class="popup-description">A secret bar with amazing cocktails. Try asking for the "moonlight" password to access their secret menu with unique drinks.</p>
+                <div class="popup-tags">
+                    <span class="popup-tag"><i class="fas fa-utensils"></i> Bar</span>
+                    <span class="popup-tag"><i class="fas fa-star"></i> 4.8</span>
+                    <span class="popup-tag"><i class="fas fa-gem"></i> Hidden Gem</span>
+                </div>
+            </div>
+            <div class="popup-actions">
+                <button class="popup-btn save-btn">
+                    <i class="far fa-bookmark"></i> Save
+                </button>
+                <button class="popup-btn directions-btn">
+                    <i class="fas fa-directions"></i> Directions
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-gem"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">You're near a hidden gem!</div>
+            <div class="notification-message">There's a secret speakeasy just 50m away. Check it out!</div>
+        </div>
+        <div class="close-notification" id="close-notification">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize map with dark style
+            const map = L.map('map').setView([40.7128, -74.0060], 3); // New York as starting point
+            
+            // Add dark mode map tiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Hidden gem locations around the world
+            const locations = [
+                { lat: 40.7128, lng: -74.0060, name: "Secret Speakeasy", type: "hidden", description: "A hidden speakeasy bar with amazing craft cocktails. Ask for the secret menu!" },
+                { lat: 48.8566, lng: 2.3522, name: "Underground Jazz Club", type: "hidden", description: "A hidden jazz club in Paris only locals know about." },
+                { lat: 35.6762, lng: 139.6503, name: "Hidden Ramen Shop", type: "food", description: "Tiny ramen shop with only 8 seats, serving the best noodles in Tokyo." },
+                { lat: 51.5074, lng: -0.1278, name: "Secret Garden", type: "attractions", description: "A beautiful garden hidden between buildings in central London." },
+                { lat: -33.8688, lng: 151.2093, name: "Hidden Beach Cove", type: "hidden", description: "A secluded beach with crystal clear water that tourists rarely find." },
+                { lat: 22.3193, lng: 114.1694, name: "Hidden Dim Sum", type: "food", description: "Family-run dim sum place up a narrow staircase. Best dumplings in Hong Kong!" }
+            ];
+            
+            // Custom icon for gems
+            const gemIcon = L.divIcon({
+                className: 'custom-marker',
+                html: '<i class="fas fa-gem"></i>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            
+            // Add markers to map
+            const markers = [];
+            locations.forEach(location => {
+                const marker = L.marker([location.lat, location.lng], { icon: gemIcon }).addTo(map);
+                marker.locationData = location;
+                
+                marker.on('click', function() {
+                    showLocationDetails(location);
+                });
+                
+                markers.push(marker);
+            });
+            
+            // Simulate user location (center of the map)
+            const userMarker = L.circleMarker([40.7128, -74.0060], {
+                radius: 8,
+                fillColor: '#00C8FF',
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 1
+            }).addTo(map);
+            
+            // Show location details in popup
+            function showLocationDetails(location) {
+                const popup = document.getElementById('location-popup');
+                const popupTitle = popup.querySelector('.popup-title');
+                const popupDescription = popup.querySelector('.popup-description');
+                
+                popupTitle.textContent = location.name;
+                popupDescription.textContent = location.description;
+                
+                // Update tags based on location type
+                const tagsContainer = popup.querySelector('.popup-tags');
+                tagsContainer.innerHTML = '';
+                
+                let typeIcon = 'fas fa-map-marker-alt';
+                if (location.type === 'food') typeIcon = 'fas fa-utensils';
+                if (location.type === 'hidden') typeIcon = 'fas fa-gem';
+                if (location.type === 'attractions') typeIcon = 'fas fa-monument';
+                
+                const typeTag = document.createElement('span');
+                typeTag.className = 'popup-tag';
+                typeTag.innerHTML = `<i class="${typeIcon}"></i> ${location.type.charAt(0).toUpperCase() + location.type.slice(1)}`;
+                tagsContainer.appendChild(typeTag);
+                
+                const ratingTag = document.createElement('span');
+                ratingTag.className = 'popup-tag';
+                ratingTag.innerHTML = '<i class="fas fa-star"></i> 4.8';
+                tagsContainer.appendChild(ratingTag);
+                
+                popup.style.display = 'block';
+            }
+            
+            // Close popup
+            document.getElementById('close-popup').addEventListener('click', function() {
+                document.getElementById('location-popup').style.display = 'none';
+            });
+            
+            // Filter buttons
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter markers
+                    const filter = this.getAttribute('data-filter');
+                    
+                    markers.forEach(marker => {
+                        if (filter === 'all' || marker.locationData.type === filter) {
+                            marker._icon.style.display = '';
+                        } else {
+                            marker._icon.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    const searchText = this.value.toLowerCase();
+                    
+                    if (searchText.trim() === '') return;
+                    
+                    // Find matches
+                    const matches = locations.filter(location => 
+                        location.name.toLowerCase().includes(searchText) || 
+                        location.description.toLowerCase().includes(searchText)
+                    );
+                    
+                    if (matches.length > 0) {
+                        // Center on first match
+                        map.setView([matches[0].lat, matches[0].lng], 14);
+                        
+                        // Show notification
+                        showNotification(`Found ${matches.length} location(s) matching "${searchText}"`);
+                    } else {
+                        showNotification('No matching locations found', 'alert');
+                    }
+                }
+            });
+            
+            // Map controls
+            document.getElementById('recenter-btn').addEventListener('click', function() {
+                // Pan to user marker
+                map.setView([userMarker.getLatLng().lat, userMarker.getLatLng().lng], 14);
+                showNotification('Map centered on your location');
+            });
+            
+            document.getElementById('zoom-in-btn').addEventListener('click', function() {
+                map.zoomIn();
+            });
+            
+            document.getElementById('zoom-out-btn').addEventListener('click', function() {
+                map.zoomOut();
+            });
+            
+            // Notification handling
+            const notification = document.getElementById('notification');
+            const closeNotification = document.getElementById('close-notification');
+            
+            function showNotification(message, type = 'info') {
+                const title = notification.querySelector('.notification-title');
+                const messageEl = notification.querySelector('.notification-message');
+                const icon = notification.querySelector('.notification-icon i');
+                
+                if (type === 'alert') {
+                    title.textContent = 'Alert';
+                    icon.className = 'fas fa-exclamation-circle';
+                } else if (type === 'gem') {
+                    title.textContent = "You're near a hidden gem!";
+                    icon.className = 'fas fa-gem';
+                } else {
+                    title.textContent = 'Notification';
+                    icon.className = 'fas fa-bell';
+                }
+                
+                messageEl.textContent = message;
+                notification.classList.add('active');
+                
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    notification.classList.remove('active');
+                }, 5000);
+            }
+            
+            closeNotification.addEventListener('click', function() {
+                notification.classList.remove('active');
+            });
+            
+            // Show initial gem notification after 2 seconds
+            setTimeout(() => {
+                showNotification("There's a secret speakeasy just 50m away. Check it out!", 'gem');
+            }, 2000);
+        });
+    </script>
+</body>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITravel - Travel Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            line-height: 1.6;
+            background-color: #1c1c1c;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #1c1c1c;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        
+        .logo i {
+            color: #FFFC00;
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .nav-link:hover {
+            color: #FFFC00;
+        }
+        
+        .active-link {
+            color: #FFFC00;
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .section-title .icon {
+            color: #FFFC00;
+            font-size: 32px;
+            margin-right: 15px;
+            vertical-align: middle;
+        }
+        
+        .section-title h1 {
+            display: inline-block;
+            font-size: 32px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, #FFFC00, #00C8FF);
+        }
+        
+        .section-description {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px;
+            color: #cccccc;
+            font-size: 16px;
+        }
+        
+        /* Form Container */
+        .form-container {
+            background-color: #232323;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+        
+        .form-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #eee;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #FFFC00;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #333;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #FFFC00;
+        }
+        
+        .preference-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .preference-tag {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #444;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .preference-tag:hover {
+            background-color: #555;
+        }
+        
+        .preference-tag.active {
+            background-color: #FFFC00;
+            color: #000;
+        }
+        
+        .form-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #FFFC00;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+        
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 252, 0, 0.3);
+        }
+        
+        /* Itinerary Result */
+        .itinerary-result {
+            background-color: #232323;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            margin: 50px auto;
+            display: none;
+        }
+        
+        .itinerary-result.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .result-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .result-summary {
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+        
+        .itinerary-day {
+            margin-bottom: 30px;
+        }
+        
+        .day-header {
+            background-color: #333;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .activity {
+            display: flex;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #2a2a2a;
+        }
+        
+        .activity-time {
+            width: 80px;
+            font-weight: 500;
+            color: #00C8FF;
+        }
+        
+        .activity-details {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .activity-description {
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .activity-price {
+            color: #FFFC00;
+            font-weight: 500;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .result-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        .total-budget {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .result-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .save-btn {
+            background-color: transparent;
+            border: 1px solid #00C8FF;
+            color: #00C8FF;
+        }
+        
+        .save-btn:hover {
+            background-color: rgba(0, 200, 255, 0.1);
+        }
+        
+        .share-btn {
+            background-color: #FFFC00;
+            color: #000;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(255, 252, 0, 0.3);
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #333;
+            border-top: 5px solid #FFFC00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        
+        .loading-spinner.active {
+            display: block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-container, .itinerary-result {
+                padding: 30px 20px;
+            }
+            
+            .activity {
+                flex-direction: column;
+            }
+            
+            .activity-time {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .result-footer {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .total-budget {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="logo">
+            <i class="fas fa-globe-americas"></i>
+            AITravel
+        </a>
+        <div class="nav-links">
+            <a href="map.html" class="nav-link">Explore</a>
+            <a href="#" class="nav-link active-link">Plan</a>
+            <a href="#" class="nav-link">Profile</a>
+        </div>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="section-title">
+            <i class="fas fa-route icon"></i>
+            <h1>AI Travel Assistant</h1>
+        </div>
+        
+        <p class="section-description">
+            Our AI Travel Assistant revolutionizes trip planning by creating personalized itineraries based on your unique preferences, budget, and interests.
+        </p>
+        
+        <!-- Trip Planning Form -->
+        <div class="form-container">
+            <h2 class="form-title">Plan Your Perfect Trip</h2>
+            
+            <form id="travel-form">
+                <div class="form-group">
+                    <label for="destination" class="form-label">Destination</label>
+                    <input type="text" id="destination" class="form-input" placeholder="Enter city or country">
+                </div>
+                
+                <div class="form-group">
+                    <label for="travel-dates" class="form-label">Travel Dates</label>
+                    <div style="display: flex; gap: 15px;">
+                        <input type="date" id="start-date" class="form-input" placeholder="Start date">
+                        <input type="date" id="end-date" class="form-input" placeholder="End date">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="budget" class="form-label">Budget</label>
+                    <select id="budget" class="form-select">
+                        <option value="">Select your budget range</option>
+                        <option value="budget">Budget ($0-$100/day)</option>
+                        <option value="moderate">Moderate ($100-$300/day)</option>
+                        <option value="luxury">Luxury ($300+/day)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="travelers" class="form-label">Number of Travelers</label>
+                    <input type="number" id="travelers" class="form-input" min="1" max="10" value="1">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Travel Preferences</label>
+                    <div class="preference-tags">
+                        <div class="preference-tag" data-preference="culture">Culture & History</div>
+                        <div class="preference-tag" data-preference="food">Food & Dining</div>
+                        <div class="preference-tag" data-preference="nature">Nature & Outdoors</div>
+                        <div class="preference-tag" data-preference="adventure">Adventure</div>
+                        <div class="preference-tag" data-preference="relaxation">Relaxation</div>
+                        <div class="preference-tag" data-preference="shopping">Shopping</div>
+                        <div class="preference-tag" data-preference="nightlife">Nightlife</div>
+                        <div class="preference-tag" data-preference="family">Family-friendly</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="special-requests" class="form-label">Special Requests (Optional)</label>
+                    <input type="text" id="special-requests" class="form-input" placeholder="Any specific places or activities you want to include?">
+                </div>
+                
+                <button type="button" id="generate-btn" class="form-button">Generate Itinerary</button>
+            </form>
+        </div>
+        
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loading-spinner"></div>
+        
+        <!-- Itinerary Result -->
+        <div class="itinerary-result" id="itinerary-result">
+            <div class="result-header">
+                <h2 class="result-title">Your Paris Itinerary</h2>
+                <div class="result-details">3 days • Budget: $1,200</div>
+            </div>
+            
+            <div class="result-summary">
+                Experience the best of Paris with this personalized 3-day itinerary. We've balanced must-see attractions with hidden gems and authentic local experiences, all within your budget.
+            </div>
+            
+            <div class="itinerary-days">
+                <div class="itinerary-day">
+                    <h3 class="day-header">Day 1: Classic Paris Highlights</h3>
+                    
+                    <div class="activity">
+                        <div class="activity-time">09:00 AM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Breakfast at Café de Flore</h4>
+                            <p class="activity-description">Start your day with a classic Parisian breakfast at this historic café.</p>
+                            <p class="activity-price">Estimated cost: €20</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">11:00 AM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Eiffel Tower Visit</h4>
+                            <p class="activity-description">Skip-the-line tickets to visit Paris's most iconic landmark.</p>
+                            <p class="activity-price">Estimated cost: €30</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">02:00 PM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Lunch at Le Petit Italien</h4>
+                            <p class="activity-description">A charming bistro with authentic French cuisine and reasonable prices.</p>
+                            <p class="activity-price">Estimated cost: €25</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">04:00 PM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Louvre Museum</h4>
+                            <p class="activity-description">Explore the world's largest art museum, home to thousands of works.</p>
+                            <p class="activity-price">Estimated cost: €15</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">08:00 PM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Dinner at Le Comptoir</h4>
+                            <p class="activity-description">A hidden gem loved by locals, offering seasonal French cuisine.</p>
+                            <p class="activity-price">Estimated cost: €40</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="itinerary-day">
+                    <h3 class="day-header">Day 2: Cultural Discoveries</h3>
+                    
+                    <div class="activity">
+                        <div class="activity-time">10:00 AM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Montmartre Walking Tour</h4>
+                            <p class="activity-description">Explore this historic art district and visit Sacré-Cœur Basilica.</p>
+                            <p class="activity-price">Estimated cost: €15</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">01:00 PM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Lunch at La Petite Rose</h4>
+                            <p class="activity-description">A cozy café with excellent crepes and sandwiches.</p>
+                            <p class="activity-price">Estimated cost: €20</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">03:00 PM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Seine River Cruise</h4>
+                            <p class="activity-description">See Paris from the water on this relaxing one-hour cruise.</p>
+                            <p class="activity-price">Estimated cost: €18</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="itinerary-day">
+                    <h3 class="day-header">Day 3: Hidden Gems</h3>
+                    
+                    <div class="activity">
+                        <div class="activity-time">09:00 AM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Luxembourg Gardens</h4>
+                            <p class="activity-description">Enjoy a peaceful morning in one of Paris's most beautiful parks.</p>
+                            <p class="activity-price">Estimated cost: Free</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">12:00 PM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Food Tour in Le Marais</h4>
+                            <p class="activity-description">Sample delicious French specialties in this trendy neighborhood.</p>
+                            <p class="activity-price">Estimated cost: €65</p>
+                        </div>
+                    </div>
+                    
+                    <div class="activity">
+                        <div class="activity-time">04:00 PM</div>
+                        <div class="activity-details">
+                            <h4 class="activity-title">Visit to Hidden Wine Bar</h4>
+                            <p class="activity-description">Enjoy a wine tasting at a secret spot known only to locals.</p>
+                            <p class="activity-price">Estimated cost: €35</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-footer">
+                <div class="total-budget">Total Estimated Cost: €283 per person</div>
+                <div class="result-actions">
+                    <button class="result-btn save-btn">
+                        <i class="far fa-bookmark"></i> Save Itinerary
+                    </button>
+                    <button class="result-btn share-btn">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle preference tags
+            const preferenceTags = document.querySelectorAll('.preference-tag');
+            preferenceTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+            
+            // Generate itinerary
+            const generateBtn = document.getElementById('generate-btn');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const itineraryResult = document.getElementById('itinerary-result');
+            
+            generateBtn.addEventListener('click', function() {
+                // Form validation
+                const destination = document.getElementById('destination').value;
+                if (!destination) {
+                    alert('Please enter a destination');
+                    return;
+                }
+                
+                // Show loading spinner
+                loadingSpinner.classList.add('active');
+                document.querySelector('.form-container').style.opacity = '0.5';
+                
+                // Simulate API call (in real app, this would call your backend)
+                setTimeout(() => {
+                    // Hide loading spinner
+                    loadingSpinner.classList.remove('active');
+                    document.querySelector('.form-container').style.opacity = '1';
+                    
+                    // Show itinerary result
+                    itineraryResult.classList.add('active');
+                    
+                    // Scroll to result
+                    itineraryResult.scrollIntoView({ behavior: 'smooth' });
+                }, 2000);
+            });
+            
+            // Initialize date inputs with today and tomorrow
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const formatDate = date => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+            
+            document.getElementById('start-date').value = formatDate(today);
+            document.getElementById('end-date').value = formatDate(tomorrow);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITravel - AI-Powered Travel Companion</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: #1c1c1c;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background-color: #1c1c1c;
+            color: white;
+            padding: 120px 5%;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s 0.3s forwards;
+        }
+        
+        .hero-btn {
+            background: #FFFC00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s 0.6s forwards;
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 252, 0, 0.3);
+        }
+        
+        .hero-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Smart Features Section */
+        .smart-features {
+            padding: 120px 5%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+            background-color: #1c1c1c;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .smart-features.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: white;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, #FFFC00, #00C8FF);
+            margin: 15px auto;
+            transition: width 0.5s ease;
+        }
+        
+        .section-description {
+            max-width: 700px;
+            margin: 0 auto 50px;
+            color: #cccccc;
+            font-size: 16px;
+        }
+        
+        .features-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 30px auto;
+            width: 100%;
+        }
+        
+        .feature-card {
+            background: #232323;
+            border-radius: 15px;
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .feature-card.animated {
+            animation: cardAppear 0.6s forwards;
+        }
+        
+        .feature-card:nth-child(1).animated {
+            animation-delay: 0.1s;
+        }
+        
+        .feature-card:nth-child(2).animated {
+            animation-delay: 0.3s;
+        }
+        
+        .feature-card:nth-child(3).animated {
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #FFFC00, #00C8FF);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            color: #FFFC00;
+            font-size: 32px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2);
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        
+        .feature-card:hover h3 {
+            color: #FFFC00;
+        }
+        
+        .feature-card p {
+            color: #cccccc;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .explore-more {
+            color: #00C8FF;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        .explore-more i {
+            margin-left: 5px;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .explore-more i {
+            transform: translateX(5px);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background-color: #232323;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.5s ease;
+            color: white;
+            text-align: left;
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: #FFFC00;
+            transform: rotate(90deg);
+        }
+        
+        .modal-header {
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 28px;
+            color: white;
+            margin-left: 10px;
+        }
+        
+        .modal-header i {
+            color: #FFFC00;
+            font-size: 28px;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-body p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #cccccc;
+        }
+        
+        .modal-body h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .modal-body ul {
+            margin-bottom: 25px;
+            padding-left: 0;
+            list-style: none;
+            color: #cccccc;
+        }
+        
+        .modal-body li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .modal-body li::before {
+            content: "•";
+            color: #FFFC00;
+            position: absolute;
+            left: 0;
+            font-size: 20px;
+        }
+        
+        .modal-body img {
+            width: 100%;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .modal-footer {
+            text-align: center;
+        }
+        
+        .modal-btn {
+            background: #FFFC00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 252, 0, 0.3);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .feature-card {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .modal-header h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your AI-Powered Travel & Content Companion</h1>
+            <p>Discover new places, create engaging content, and plan your next adventure with the power of artificial intelligence.</p>
+            <button class="hero-btn" id="start-exploring">START EXPLORING</button>
+        </div>
+    </section>
+    
+    <!-- Smart Features Section -->
+    <section class="smart-features" id="features">
+        <h2 class="section-title">Smart Features</h2>
+        <p class="section-description">Our AI-powered app combines cutting-edge technology with your creativity to deliver a unique travel experience.</p>
+        
+        <div class="features-container">
+            <div class="feature-card" data-feature="location">
+                <i class="fas fa-map-marker-alt feature-icon"></i>
+                <h3>Location Alerts</h3>
+                <p>Get personalized notifications about interesting spots nearby, with insider tips and hidden gems.</p>
+                <a href="#" class="explore-more">Explore more <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="feature-card" data-feature="travel">
+                <i class="fas fa-route feature-icon"></i>
+                <h3>AI Travel Assistant</h3>
+                <p>Plan personalized trips with AI insights that optimize your budget and match your preferences.</p>
+                <a href="#" class="explore-more">Explore more <i class="fas fa-arrow-right"></i></a>
+            </div>
+            
+            <div class="feature-card" data-feature="sketch">
+                <i class="fas fa-pencil-alt feature-icon"></i>
+                <h3>Sketch to Avatar</h3>
+                <p>Transform your hand-drawn sketches into stunning animated avatars with our GAN technology.</p>
+                <a href="#" class="explore-more">Explore more <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+    
+                <!-- Location Alerts Modal -->
+    <div class="modal" id="location-modal">
+        <div class="modal-content">
+            <span class="close-modal"><i class="fas fa-times"></i></span>
+            <div class="modal-header">
+                <i class="fas fa-map-marker-alt"></i>
+                <h2>Location Alerts</h2>
+            </div>
+            <div class="modal-body">
+                <p>Our innovative location alert system uses precise GPS technology to identify interesting points around you in real-time.</p>
+                <h3>How it works:</h3>
+                <ul>
+                    <li>Our AI scans your surroundings for hidden gems and local hotspots</li>
+                    <li>Receive personalized notifications with insider tips</li>
+                    <li>Discover secret locations not found in standard travel guides</li>
+                    <li>Full privacy controls let you decide when location tracking is active</li>
+                </ul>
+                <p>Whether it's a hidden speakeasy, a stunning viewpoint, or a local cultural event, our app ensures you never miss out on amazing experiences just around the corner.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="map.html" class="modal-btn">Try Location Alerts</a>
+            </div>
+        </div>
+    </div>
+    
+                <!-- AI Travel Assistant Modal -->
+    <div class="modal" id="travel-modal">
+        <div class="modal-content">
+            <span class="close-modal"><i class="fas fa-times"></i></span>
+            <div class="modal-header">
+                <i class="fas fa-route"></i>
+                <h2>AI Travel Assistant</h2>
+            </div>
+            <div class="modal-body">
+                <p>Our AI Travel Assistant revolutionizes trip planning by creating personalized itineraries based on your unique preferences.</p>
+                <h3>Key features:</h3>
+                <ul>
+                    <li>Advanced budget optimization to maximize your travel experience</li>
+                    <li>Preference matching for accommodations, activities, and dining</li>
+                    <li>Real-time availability checking and dynamic itinerary adjustments</li>
+                    <li>Local insights and authentic recommendations</li>
+                </ul>
+                <p>Simply input your travel dates, budget, and preferences, and our AI will craft the perfect itinerary that balances must-see attractions with off-the-beaten-path experiences.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="travel.html" class="modal-btn">Plan Your Trip</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sketch to Avatar Modal -->
+    <div class="modal" id="sketch-modal">
+        <div class="modal-content">
+            <span class="close-modal"><i class="fas fa-times"></i></span>
+            <div class="modal-header">
+                <i class="fas fa-pencil-alt"></i>
+                <h2>Sketch to Avatar</h2>
+            </div>
+            <div class="modal-body">
+                <p>Transform your simple hand-drawn sketches into fully animated digital avatars with our cutting-edge GAN technology.</p>
+                <h3>How it works:</h3>
+                <ul>
+                    <li>Upload a photo of your hand-drawn sketch</li>
+                    <li>Our AI analyzes and transforms it into a digital character</li>
+                    <li>Apply animations and expressions to bring your creation to life</li>
+                    <li>Use your avatar in videos, social media, and throughout our app</li>
+                </ul>
+                <p>Create a unique digital representation of yourself for your travel content that stands out from the crowd. No artistic skills required!</p>
+            </div>
+            <div class="modal-footer">
+                <a href="sketch.html" class="modal-btn">Try Avatar Creator</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Show features section when scrolled to
+        const featuresSection = document.querySelector('.smart-features');
+        const featureCards = document.querySelectorAll('.feature-card');
+        const startExploringBtn = document.getElementById('start-exploring');
+        const modals = document.querySelectorAll('.modal');
+        const closeButtons = document.querySelectorAll('.close-modal');
+        
+        // Check if element is in viewport
+        function isInViewport(element) {
+            const rect = element.getBoundingClientRect();
+            return (
+                rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8
+            );
+        }
+        
+        // Animate elements when they come into view
+        function checkScroll() {
+            if (isInViewport(featuresSection)) {
+                featuresSection.classList.add('visible');
+                featureCards.forEach(card => {
+                    card.classList.add('animated');
+                });
+            }
+        }
+        
+        // Scroll to features section when button is clicked
+        startExploringBtn.addEventListener('click', () => {
+            // Calculate the position to scroll to (centered in viewport)
+            const featuresSectionHeight = featuresSection.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const scrollToPosition = featuresSection.offsetTop - ((windowHeight - featuresSectionHeight) / 2);
+            
+            window.scrollTo({
+                top: featuresSection.offsetTop,
+                behavior: 'smooth'
+            });
+            
+            // Ensure the features cards are animated
+            setTimeout(() => {
+                featuresSection.classList.add('visible');
+                featureCards.forEach(card => {
+                    card.classList.add('animated');
+                });
+            }, 500);
+        });
+        
+        // Modal functionality
+        featureCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const feature = card.getAttribute('data-feature');
+                const modal = document.getElementById(`${feature}-modal`);
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // Close modal when clicking outside the content
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+        
+        // Close modal with escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                modals.forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Initial check for elements in viewport
+        window.addEventListener('load', checkScroll);
+        window.addEventListener('scroll', checkScroll);
+    </script>
+</body>
+</html>
